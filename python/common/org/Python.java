@@ -1576,4 +1576,49 @@ public class Python {
     public static org.python.Object zip() {
         throw new org.python.exceptions.NotImplementedError("Builtin function 'zip' not implemented");
     }
+
+    public static org.python.Object __cmp__(org.python.Object left, org.python.Object right, java.lang.String operator) {
+        // Based on a combination of
+        //     Python/ceval.c:cmp_outcome
+        // and
+        //     Objects/object:PyObject_RichCompare
+        boolean negate = false;
+        switch (operator) {
+            case "is not":
+                return new org.python.types.Bool(left != right);
+            case "is":
+                return new org.python.types.Bool(left == right);
+            case "not in":
+                negate = true;
+                // fall-through.
+            case "in":
+                // TODO: Actually, look at Objects/abstract:PySequence_Contains
+                // We should first check if __contains__ exists, and otherwise
+                // do an iter-check for equality.
+                org.python.types.Bool contains = (org.python.types.Bool) right.__contains__(left);
+                if (negate) {
+                    return new org.python.types.Bool(!contains.value);
+                }
+                return contains;
+            case "exception match":
+                throw new org.python.exceptions.NotImplementedError("COMPARE_OP 'exception match' not implemented");
+        }
+        java.lang.String[] operators = {"<", "<=", "==", "!=", ">", ">="};
+        java.lang.String[] methods = {"__lt__", "__le__", "__eq__", "__ne__", "__gt__", "__ge__"};
+
+        int methodIndex;
+        for (methodIndex = 0; methodIndex < operators.length; methodIndex++) {
+            if (operators[methodIndex].equals(operator)) {
+                break;
+            }
+        }
+        assert methodIndex < operators.length: ("Unknown operator " + operator);
+
+        org.python.Object f;
+        if ((f = left.__getattribute_null(methods[methodIndex])) != null) {
+            org.python.Object[] args = {right};
+            return ((org.python.Callable)f).invoke(args, new java.util.HashMap());
+        }
+        throw new org.python.exceptions.TypeError("'" + operator + "' not supported between instances of '" + left.typeName() + "' and '" + right.typeName() + "'");
+    }
 }

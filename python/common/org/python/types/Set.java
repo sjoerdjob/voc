@@ -87,7 +87,8 @@ public class Set extends org.python.types.Object {
     }
 
     @org.python.Method(
-        __doc__ = ""
+        __doc__ = "",
+        args = {"other"}
     )
     public org.python.Object __lt__(org.python.Object other) {
         if (other instanceof org.python.types.Set) {
@@ -100,7 +101,8 @@ public class Set extends org.python.types.Object {
     }
 
     @org.python.Method(
-        __doc__ = ""
+        __doc__ = "",
+        args = {"other"}
     )
     public org.python.Object __le__(org.python.Object other) {
         if (other instanceof org.python.types.Set) {
@@ -113,7 +115,8 @@ public class Set extends org.python.types.Object {
     }
 
     @org.python.Method(
-        __doc__ = ""
+        __doc__ = "",
+        args = {"other"}
     )
     public org.python.Object __eq__(org.python.Object other) {
         boolean eq = false;
@@ -125,14 +128,16 @@ public class Set extends org.python.types.Object {
     }
 
     @org.python.Method(
-        __doc__ = ""
+        __doc__ = "",
+        args = {"other"}
     )
     public org.python.Object __ne__(org.python.Object other) {
         return new org.python.types.Bool(!((org.python.types.Bool) this.__eq__(other)).value);
     }
 
     @org.python.Method(
-        __doc__ = ""
+        __doc__ = "",
+        args = {"other"}
     )
     public org.python.Object __gt__(org.python.Object other) {
         if (other instanceof org.python.types.Set) {
@@ -145,7 +150,8 @@ public class Set extends org.python.types.Object {
     }
 
     @org.python.Method(
-        __doc__ = ""
+        __doc__ = "",
+        args = {"other"}
     )
     public org.python.Object __ge__(org.python.Object other) {
         if (other instanceof org.python.types.Set) {

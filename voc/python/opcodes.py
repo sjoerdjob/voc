@@ -2081,68 +2081,16 @@ class COMPARE_OP(Opcode):
 
     def convert(self, context, arguments):
         context.next_resolve_list.append((self, 'start_op'))
-        # Add the operand which will be the left side, and thus the
-        # target of the comparator operator.
-        const_comparison = False
         for argument in arguments:
-            if argument.operation.opname == 'LOAD_CONST':
-                if argument.operation.const is not None:
-                    const_comparison = True
             argument.operation.transpile(context, argument.arguments)
 
-        if self.comparison == 'is not' and not const_comparison:
-            context.add_opcodes(
-                IF([], JavaOpcodes.IF_ACMPEQ),
-                    JavaOpcodes.NEW('org/python/types/Bool'),
-                    JavaOpcodes.DUP(),
-                    JavaOpcodes.ICONST_1(),
-                    JavaOpcodes.INVOKESPECIAL('org/python/types/Bool', '<init>', '(Z)V'),
-                ELSE(),
-                    JavaOpcodes.NEW('org/python/types/Bool'),
-                    JavaOpcodes.DUP(),
-                    JavaOpcodes.ICONST_0(),
-                    JavaOpcodes.INVOKESPECIAL('org/python/types/Bool', '<init>', '(Z)V'),
-                END_IF(),
-            )
-        elif self.comparison == 'is' and not const_comparison:
-            context.add_opcodes(
-                IF([], JavaOpcodes.IF_ACMPNE),
-                    JavaOpcodes.NEW('org/python/types/Bool'),
-                    JavaOpcodes.DUP(),
-                    JavaOpcodes.ICONST_1(),
-                    JavaOpcodes.INVOKESPECIAL('org/python/types/Bool', '<init>', '(Z)V'),
-                ELSE(),
-                    JavaOpcodes.NEW('org/python/types/Bool'),
-                    JavaOpcodes.DUP(),
-                    JavaOpcodes.ICONST_0(),
-                    JavaOpcodes.INVOKESPECIAL('org/python/types/Bool', '<init>', '(Z)V'),
-                END_IF(),
-            )
-        else:
-            comparator = {
-                '<': '__lt__',
-                '<=': '__le__',
-                '>': '__gt__',
-                '>=': '__ge__',
-                '==': '__eq__',
-                '!=': '__ne__',
-                'is': '__eq__',
-                'is not': '__ne__',
-                'exception match': '__eq__',
-                'in': '__contains__',
-                'not in': '__contains__',
-                'not in': '__not_contains__',
-            }[self.comparison]
-
-            # Some operators take their operands in reverse order:
-            if self.comparison in ('in', 'not in'):
-                context.add_opcodes(
-                    JavaOpcodes.SWAP()
-                )
-
-            context.add_opcodes(
-                JavaOpcodes.INVOKEINTERFACE('org/python/Object', comparator, '(Lorg/python/Object;)Lorg/python/Object;')
-            )
+        context.add_opcodes(
+            JavaOpcodes.LDC_W(self.comparison),
+            JavaOpcodes.INVOKESTATIC(
+                'org/Python',
+                '__cmp__',
+                '(Lorg/python/Object;Lorg/python/Object;Ljava/lang/String;)Lorg/python/Object;'),
+        )
 
 
 class IMPORT_NAME(Opcode):

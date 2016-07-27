@@ -3,9 +3,22 @@ from ..utils import TranspileTestCase
 
 class ComparisonTests(TranspileTestCase):
     def test_is(self):
+        # This depends on integer caching.
+        #self.assertCodeExecution("""
+        #    x = 1
+        #    if x is 1:
+        #        print('Correct')
+        #    else:
+        #        print('Incorrect')
+        #    print('Done.')
+        #    """)
+
         self.assertCodeExecution("""
-            x = 1
-            if x is 1:
+            # In CPython, if we were to use 1024 twice, they would share the
+            # same slot in the constants. After VOC is done with it, it will
+            # still create separate instances of the integer, however.
+            x = 512 + 512
+            if x is 1024:
                 print('Correct')
             else:
                 print('Incorrect')
@@ -49,9 +62,22 @@ class ComparisonTests(TranspileTestCase):
             print('Done.')
             """)
 
+        # This depends on integer-caching.
+        #self.assertCodeExecution("""
+        #    x = 1
+        #    if x is not 1:
+        #        print('Correct')
+        #    else:
+        #        print('Incorrect')
+        #    print('Done.')
+        #    """)
+
         self.assertCodeExecution("""
-            x = 1
-            if x is not 1:
+            # In CPython, if we were to use 1024 twice, they would share the
+            # same slot in the constants. After VOC is done with it, it will
+            # still create separate instances of the integer, however.
+            x = 512 + 512
+            if x is not 1024:
                 print('Correct')
             else:
                 print('Incorrect')
