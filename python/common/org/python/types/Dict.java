@@ -271,13 +271,6 @@ public class Dict extends org.python.types.Object {
     }
 
     @org.python.Method(
-        __doc__ = ""
-    )
-    public org.python.Object __not_contains__(org.python.Object item) {
-        return new org.python.types.Bool(this.value.get(item) == null);
-    }
-
-    @org.python.Method(
         __doc__ = "D.clear() -> None.  Remove all items from D."
     )
     public org.python.Object clear() {

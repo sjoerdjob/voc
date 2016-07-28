@@ -482,14 +482,6 @@ public class Object implements org.python.Object {
         throw new org.python.exceptions.AttributeError(this, "__contains__");
     }
 
-    @org.python.Method(
-        __doc__ = "",
-        args = {"item"}
-    )
-    public org.python.Object __not_contains__(org.python.Object item) {
-        throw new org.python.exceptions.AttributeError(this, "__not_contains__");
-    }
-
     /**
      * Section 3.3.7 - Emulating numeric types
      */

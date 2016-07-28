@@ -227,13 +227,6 @@ public class Set extends org.python.types.Object {
     @org.python.Method(
         __doc__ = ""
     )
-    public org.python.Object __not_contains__(org.python.Object other) {
-        return new org.python.types.Bool(!this.value.contains(other));
-    }
-
-    @org.python.Method(
-        __doc__ = ""
-    )
     public org.python.Object __mul__(org.python.Object other) {
         if (other instanceof org.python.types.List) {
             throw new org.python.exceptions.TypeError("can't multiply sequence by non-int of type '" + this.typeName() + "'");
